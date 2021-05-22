@@ -1,5 +1,11 @@
 # Using bash to get information from CSV files
 
+The data used in this exercise was taken from
+[Kaggle](https://www.kaggle.com/kaggle/us-baby-names). Inside
+`NationalNames.csv.zip` comes a CSV file with data describing the number of
+times a particular name was given to babies in a particular year in the US.
+
+
 1. Unzip the NationalNames.csv file.
 
     ```
