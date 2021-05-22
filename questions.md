@@ -58,18 +58,18 @@
     tail -n +2 NationalNames.csv |
     LC_ALL=C sort -n -t ',' -k '3,3' |
     tail -1 | {
-    read line
-    IFS=,
-    row=($line)
-    echo "Newest year: ${row[2]}"
+        read line
+        IFS=,
+        row=($line)
+        echo "Newest year: ${row[2]}"
     }
     tail -n +2 NationalNames.csv |
     LC_ALL=C sort -n -t ',' -k '3,3' |
     head -1 | {
-    read line
-    IFS=,
-    row=($line)
-    echo "Oldest year: ${row[2]}"
+        read line
+        IFS=,
+        row=($line)
+        echo "Oldest year: ${row[2]}"
     }
     ```
     ```
@@ -77,21 +77,52 @@
     Oldest year: 1880
     ```
 
-1. How many unique female names there are? How many unique male names?
+1. How many unique female names there are? How many unique male names? Are
+there any names that are for both male and female?
 
     ```bash
-    echo "Number of men: $(grep ',M,' NationalNames.csv | awk -F ',' '{print $2}'| sort | uniq -c | wc -l)"
-    echo "Number of women: $(grep ',F,' NationalNames.csv | awk -F ',' '{print $2}'| sort | uniq -c | wc -l)"
+    (
+        men=$(grep -E ',M,[[:digit:]]+$' NationalNames.csv |
+            awk -F , '{print $2}'| sort | uniq -c | wc -l)
+        women=$(grep -E ',F,[[:digit:]]+$' NationalNames.csv |
+            awk -F , '{print $2}'| sort | uniq -c | wc -l)
+        total=$(tail -n +2 NationalNames.csv |
+            awk -F , '{print $2}' | sort | uniq -c | wc -l)
+        echo "Number of male names: $men"
+        echo "Number of female names: $women"
+        echo "Number of unique names: $total"
+        echo "Number of male and female names: $((men+women-total))"
+    )
     ```
     ```
-    Number of men: 39199
-    Number of women: 64911
+    Number of male names: 39199
+    Number of female names: 64911
+    Number of unique names: 93889
+    Number of male and female names: 10221
+    ```
+
+    Other way of getting the number of male and female names:
+    ```bash
+    (
+        echo 'Number of male and female names:'
+        {
+            grep ',M,' NationalNames.csv | awk -F , '{print $2}' |
+                sort | uniq -c | awk '{print $2}'
+            grep ',F,' NationalNames.csv | awk -F , '{print $2}' |
+                sort | uniq -c | awk '{print $2}'
+        } | sort | uniq -d | wc -l
+    )
+    ```
+    ```
+    Number of male and female names:
+    10221
     ```
 
 1. How many people were named Arie in 1893? How many over all the years?
 
     ```bash
-    echo "Number of people named Arie in 1893: $(grep ',Arie,1893,' NationalNames.csv | awk -F ',' '{print $5}')"
+    echo "Number of people named Arie in 1893: $(grep ',Arie,1893,' NationalNames.csv |
+        awk -F ',' '{print $5}')"
     grep ',Arie,' NationalNames.csv | awk -F ','  '{print $5}' | {
         declare -i count=0
         while read number; do
@@ -103,16 +134,4 @@
     ```
     Number of people named Arie in 1893: 24
     Number of people named Arie over all the years: 4648
-    ```
-
-1. Are there any names that have male and female genders at the same time? How many?
-
-    ```bash
-    {
-        grep ',M,' NationalNames.csv | awk -F , '{print $2}' | sort | uniq -c | awk '{print $2}'
-        grep ',F,' NationalNames.csv | awk -F , '{print $2}' | sort | uniq -c | awk '{print $2}'
-    } | sort | uniq -d | wc -l
-    ```
-    ```
-    10221
     ```
