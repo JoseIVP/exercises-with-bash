@@ -83,8 +83,8 @@ times a particular name was given to babies in a particular year in the US.
     Oldest year: 1880
     ```
 
-1. How many unique female names there are? How many unique male names? Are
-there any names that are for both male and female?
+1. How many unique female names there are? How many unique male names? Are there
+   any names that are for both male and female?
 
     ```bash
     (
@@ -141,3 +141,58 @@ there any names that are for both male and female?
     Number of people named Arie in 1893: 24
     Number of people named Arie over all the years: 4648
     ```
+
+1. What was the most used name in 1917? Answer the question considering names
+   that are used for both sexes as separate, and then consider them as being the
+   same. Also, give the number of times the name was used.
+
+    ```bash
+    grep -E ',1917,(M|F),' NationalNames.csv | sort -t , -k 5 -n -r | head -1 |
+        awk -F , '{print $2; print $5}' | {
+            read name
+            read count
+            echo "The most used name in 1917 was $name with $count times"
+        }
+    ```
+    ```
+    The most used name in 1917 was Mary with 64280 times
+    ```
+    
+    Now considering names used for both males and females:
+    ```bash
+    grep -E ',1917,(M|F),' NationalNames.csv | awk -F , '{print $2 " " $5}' | 
+        sort -k 1,1 | {
+            lastName=
+            declare -i lastCount=0
+            bestName=
+            declare -i bestCount=0
+            while read line; do
+                arr=($line)
+                if [ "$lastName" = "${arr[0]}" ]; then
+                    lastCount+=${arr[1]}
+                else
+                    if ((lastCount>bestCount)); then
+                        bestName=$lastName
+                        bestCount=lastCount
+                    fi
+                    lastName=${arr[0]}
+                    lastCount=${arr[1]}
+                fi
+            done
+            if ((lastCount>bestCount)); then
+                resultName=$lastName
+                resultCount=$lastCount
+            else
+                resultName=$bestName
+                resultCount=$bestCount
+            fi
+            echo "The most used name in 1917 was $resultName with $resultCount times"
+        }
+    ```
+    ```
+    The most used name in 1917 was Mary with 64439 times
+    ```
+
+1. What was the most used name in the 1980's?
+
+1. What was the most used name across the whole range of years?
