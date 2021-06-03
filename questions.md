@@ -195,4 +195,60 @@ times a particular name was given to babies in a particular year in the US.
 
 1. What was the most used name in the 1980's?
 
+    ```bash
+    grep -E ',198[[:digit:]],[FM],' NationalNames.csv |
+    awk -F , '{print $2 " " $5}' |
+    sort -k 1,1 | {
+        lastName=
+        declare -i lastCount=0
+        while read line; do
+            arr=($line)
+            name=${arr[0]}
+            count=${arr[1]}
+            if [ "$lastName" = "$name" ]; then
+                lastCount+=count
+            else
+                echo $lastName $lastCount
+                lastName=$name
+                lastCount=count
+            fi
+        done
+        echo $lastName $lastCount
+    } |
+    sort -k 2,2 -n |
+    tail -1 | awk '{print "The most used name was " $1 " with " $2 " times"}'
+    ```
+
+    ```
+    The most used name was Michael with 668724 times
+    ```
+
 1. What was the most used name across the whole range of years?
+
+    ```bash
+    tail -n +2 NationalNames.csv |
+    awk -F , '{print $2 " " $5}' |
+    sort -k 1,1 | {
+        lastName=
+        declare -i lastCount=0
+        while read line; do
+            arr=($line)
+            name=${arr[0]}
+            count=${arr[1]}
+            if [ "$lastName" = "$name" ]; then
+                lastCount+=count
+            else
+                echo $lastName $lastCount
+                lastName=$name
+                lastCount=count
+            fi
+        done
+        echo $lastName $lastCount
+    } |
+    sort -k 2,2 -n |
+    tail -1 | awk '{print "The most used name was " $1 " with " $2 " times"}'
+    ```
+
+    ```
+    The most used name was James with 5129096 times
+    ```
