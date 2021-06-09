@@ -1,0 +1,8 @@
+Hi, my name is {name}, and I am {age} years old. 
+My favorite icecream flavor is {icecream}.
+My dog is called {dogname}.
+And I live in {country}.
+You can use backslashes to scape slots or variables
+like this \{name} so it won't get replaced.
+The good thing about this is that you will not have to
+search through the text and replace each variable.
