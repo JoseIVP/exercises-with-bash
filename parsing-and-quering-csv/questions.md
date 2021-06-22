@@ -89,11 +89,11 @@ times a particular name was given to babies in a particular year in the US.
     ```bash
     (
         men=$(grep -E ',M,[[:digit:]]+$' NationalNames.csv |
-            awk -F , '{print $2}'| sort | uniq -c | wc -l)
+            awk -F , '{print $2}'| sort | uniq | wc -l)
         women=$(grep -E ',F,[[:digit:]]+$' NationalNames.csv |
-            awk -F , '{print $2}'| sort | uniq -c | wc -l)
+            awk -F , '{print $2}'| sort | uniq | wc -l)
         total=$(tail -n +2 NationalNames.csv |
-            awk -F , '{print $2}' | sort | uniq -c | wc -l)
+            awk -F , '{print $2}' | sort | uniq | wc -l)
         echo "Number of male names: $men"
         echo "Number of female names: $women"
         echo "Number of unique names: $total"
@@ -113,9 +113,9 @@ times a particular name was given to babies in a particular year in the US.
         echo 'Number of male and female names:'
         {
             grep ',M,' NationalNames.csv | awk -F , '{print $2}' |
-                sort | uniq -c | awk '{print $2}'
+                sort | uniq
             grep ',F,' NationalNames.csv | awk -F , '{print $2}' |
-                sort | uniq -c | awk '{print $2}'
+                sort | uniq
         } | sort | uniq -d | wc -l
     )
     ```
